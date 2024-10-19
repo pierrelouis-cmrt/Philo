@@ -31,4 +31,4 @@ jobs:
           BRANCH: build
           FOLDER: public
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          MESSAGE: "Build: ({sha}) {msg}
+          MESSAGE: "Build: ({sha}) {msg}"
