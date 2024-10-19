@@ -1,4 +1,4 @@
-name: Generate a build and push to another branch
+name: Generate a build and push
 
 on:
   push:
@@ -10,7 +10,7 @@ jobs:
     runs-on: ubuntu-latest
     name: Build and Push
     steps:
-      - name: git-checkout
+      - name: Checkout code
         uses: actions/checkout@v4
 
       - name: Setup Node
@@ -24,11 +24,11 @@ jobs:
       - name: Build Quartz
         run: npx quartz build
 
-      - name: Push
+      - name: Push build to v4
         uses: s0/git-publish-subdir-action@develop
+        with:
+          folder: public
+          branch: v4
         env:
-          REPO: self
-          BRANCH: v4
-          FOLDER: public
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           MESSAGE: "Build: ({sha}) {msg}"
