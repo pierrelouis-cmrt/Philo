@@ -107,8 +107,13 @@ export const CrawlLinks: QuartzTransformerPlugin<Partial<Options>> = (userOpts) 
                     transformOptions,
                   )
 
-                  // url.resolve is considered legacy
-                  // WHATWG equivalent https://nodejs.dev/en/api/v18/url/#urlresolvefrom-to
+                  // Append .html if it's not already present
+                  if (!dest.endsWith(".html")) {
+                    dest = `${dest}.html` as RelativeURL
+                  }
+
+                  node.properties.href = dest
+
                   const url = new URL(dest, "https://base.com/" + stripSlashes(curSlug, true))
                   const canonicalDest = url.pathname
                   let [destCanonical, _destAnchor] = splitAnchor(canonicalDest)
@@ -116,7 +121,7 @@ export const CrawlLinks: QuartzTransformerPlugin<Partial<Options>> = (userOpts) 
                     destCanonical += "index"
                   }
 
-                  // need to decodeURIComponent here as WHATWG URL percent-encodes everything
+                  // Decode the URL and add it to the list of outgoing links
                   const full = decodeURIComponent(stripSlashes(destCanonical, true)) as FullSlug
                   const simple = simplifySlug(full)
                   outgoing.add(simple)

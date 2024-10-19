@@ -169,14 +169,16 @@ export function ExplorerNode({ node, opts, fullPath, fileData }: ExplorerNodePro
 
   // Calculate current folderPath
   const folderPath = node.name !== "" ? joinSegments(fullPath ?? "", node.name) : ""
-  const href = resolveRelative(fileData.slug!, folderPath as SimpleSlug) + "/"
+  // Append `.html` to the folder path if it's not empty (indicating a file) and doesn't end with `.html`
+  const href = resolveRelative(fileData.slug!, folderPath as SimpleSlug)
+  const fileHref = !href.endsWith(".html") ? `${href}.html` : href
 
   return (
     <>
       {node.file ? (
         // Single file node
         <li key={node.file.slug}>
-          <a href={resolveRelative(fileData.slug!, node.file.slug!)} data-for={node.file.slug}>
+          <a href={resolveRelative(fileData.slug!, node.file.slug!) + ".html"} data-for={node.file.slug}>
             {node.displayName}
           </a>
         </li>
@@ -203,7 +205,8 @@ export function ExplorerNode({ node, opts, fullPath, fileData }: ExplorerNodePro
               {/* render <a> tag if folderBehavior is "link", otherwise render <button> with collapse click event */}
               <div key={node.name} data-folderpath={folderPath}>
                 {folderBehavior === "link" ? (
-                  <a href={href} data-for={node.name} class="folder-title">
+                  // Append `.html` to the folder link if the folderBehavior is "link"
+                  <a href={fileHref} data-for={node.name} class="folder-title">
                     {node.displayName}
                   </a>
                 ) : (
@@ -240,3 +243,4 @@ export function ExplorerNode({ node, opts, fullPath, fileData }: ExplorerNodePro
     </>
   )
 }
+
