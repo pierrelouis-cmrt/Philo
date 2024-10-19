@@ -10,7 +10,7 @@ jobs:
     runs-on: ubuntu-latest
     name: Build and Push
     steps:
-      - name: Checkout code
+      - name: git-checkout
         uses: actions/checkout@v4
 
       - name: Setup Node
@@ -23,22 +23,3 @@ jobs:
 
       - name: Build Quartz
         run: npx quartz build
-
-      - name: Debug: List current directory
-        run: ls -la
-
-      - name: Debug: List 'public' directory (if exists)
-        run: ls -la public || echo "Public folder not found"
-
-      - name: Push build to v4
-        run: |
-          git config --global user.email "me@pierrelouis.net"
-          git config --global user.name "Pierre-Louis"
-          git checkout v4
-          rm -rf *
-          cp -r public/* . || echo "Public folder is missing, nothing to copy."
-          git add .
-          git commit -m "Build: (${GITHUB_SHA}) ${GITHUB_REF_NAME}"
-          git push origin v4
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
