@@ -1,4 +1,4 @@
-name: Generate a build and push to v4
+name: Generate a build and push to another branch
 
 on:
   push:
@@ -25,10 +25,14 @@ jobs:
         run: npx quartz build
 
       - name: Push build to v4
-        uses: s0/git-publish-subdir-action@develop
-        with:
-          folder: public
-          branch: v4
+        run: |
+          git config --global user.email "me@pierrelouis.net"
+          git config --global user.name "Pierre-Louis"
+          git checkout v4
+          rm -rf *
+          cp -r public/* .
+          git add .
+          git commit -m "Build: (${GITHUB_SHA}) ${GITHUB_REF_NAME}"
+          git push origin v4
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          MESSAGE: "Build: ({sha}) {msg}"
