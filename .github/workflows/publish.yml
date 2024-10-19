@@ -3,23 +3,32 @@ name: Generate a build and push to another branch
 on:
   push:
     branches:
-      - main # The branch name your are commit the new changes
+      - v4
 
 jobs:
   build:
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-latest
+    name: Build and Push
     steps:
-      - uses: actions/checkout@v4
-        with:
-          fetch-depth: 0 # Fetch all history for git info
-      - uses: actions/setup-node@v4
+      - name: git-checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
         with:
           node-version: 22
-      - name: Install Dependencies
+
+      - name: Install all dependencies
         run: npm ci
+
       - name: Build Quartz
         run: npx quartz build
-      - name: Upload artifact
-        uses: actions/upload-pages-artifact@v3
-        with:
-          path: public
+
+      - name: Push
+        uses: s0/git-publish-subdir-action@develop
+        env:
+          REPO: self
+          BRANCH: build
+          FOLDER: build
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          MESSAGE: "Build: ({sha}) {msg}"
