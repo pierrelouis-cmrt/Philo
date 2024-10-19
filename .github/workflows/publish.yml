@@ -1,4 +1,4 @@
-name: Generate a build and push
+name: Generate a build and push to v4
 
 on:
   push:
